@@ -1,89 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Virtual Home Tour</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtual Tour</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #f0f0f0;
-      text-align: center;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
-    h1 {
-      margin-top: 20px;
+    body, html {
+      height: 100%;
+      width: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .slider {
+    #container {
+      max-width: 100%;
+      max-height: 100%;
       position: relative;
-      max-width: 900px;
-      margin: 30px auto;
+      overflow: hidden;
     }
 
     img {
-      width: 100%;
-      max-height: 90vh;
-      object-fit: contain;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      display: block;
+      animation: zoomIn 20s ease-in-out infinite;
+      transform-origin: center center;
     }
 
-    button {
+    @keyframes zoomIn {
+      0% {
+        transform: scale(1);
+      }
+      100% {
+        transform: scale(1.05);
+      }
+    }
+
+    .nav-button {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0,0,0,0.6);
+      background: rgba(255, 255, 255, 0.6);
       border: none;
-      color: white;
-      font-size: 30px;
-      padding: 10px 20px;
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
       cursor: pointer;
-      border-radius: 5px;
+      z-index: 10;
+      color: #000;
     }
 
-    .prev { left: 10px; }
-    .next { right: 10px; }
+    .prev {
+      left: 10px;
+    }
 
-    .counter {
-      margin-top: 10px;
-      font-size: 18px;
-      color: #333;
+    .next {
+      right: 10px;
+    }
+
+    @media (hover: hover) {
+      .nav-button:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
     }
   </style>
 </head>
 <body>
+  <div id="container">
+    <button class="nav-button prev" onclick="prevImage()">‹</button>
+    <img id="tourImage" src="1.jpg" alt="Tour Image" />
+    <button class="nav-button next" onclick="nextImage()">›</button>
+  </div>
 
-<h1>Virtual Home Tour</h1>
+  <script>
+    const totalImages = 52;
+    let currentImage = 1;
+    const imageElement = document.getElementById("tourImage");
 
-<div class="slider">
-  <img id="slide" src="1.jpg" alt="Slide">
-  <button class="prev" onclick="prev()">←</button>
-  <button class="next" onclick="next()">→</button>
-</div>
+    function updateImage() {
+      imageElement.classList.remove("animate");
+      void imageElement.offsetWidth; // restart animation
+      imageElement.src = `${currentImage}.jpg`;
+      imageElement.classList.add("animate");
+    }
 
-<div class="counter" id="counter">1 / 52</div>
+    function nextImage() {
+      if (currentImage < totalImages) {
+        currentImage++;
+        updateImage();
+      }
+    }
 
-<script>
-  const total = 52;
-  let i = 1;
+    function prevImage() {
+      if (currentImage > 1) {
+        currentImage--;
+        updateImage();
+      }
+    }
 
-  function showSlide() {
-    document.getElementById("slide").src = `${i}.jpg`;
-    document.getElementById("counter").innerText = `${i} / ${total}`;
-  }
-
-  function next() {
-    i = (i % total) + 1;
-    showSlide();
-  }
-
-  function prev() {
-    i = (i - 2 + total) % total + 1;
-    showSlide();
-  }
-</script>
-
+    // Optional: Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+    });
+  </script>
 </body>
 </html>
