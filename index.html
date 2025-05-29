@@ -86,7 +86,7 @@
   <div id="container">
     <button class="nav-button prev" onclick="prevImage()">‹</button>
 
-    <!-- Two layers for crossfading -->
+    <!-- Two layers for crossfade -->
     <div class="image-layer" id="layer1" style="z-index: 1; opacity: 1;">
       <img src="1.jpg" id="img1" />
     </div>
@@ -110,17 +110,21 @@
     function updateImage(newImage) {
       const topLayer = showingLayer === 1 ? layer2 : layer1;
       const topImg = showingLayer === 1 ? img2 : img1;
-      topImg.src = `${newImage}.jpg`;
-
-      // Show new image on top
-      topLayer.style.zIndex = 2;
-      topLayer.style.opacity = 1;
-
       const bottomLayer = showingLayer === 1 ? layer1 : layer2;
-      bottomLayer.style.zIndex = 1;
-      bottomLayer.style.opacity = 0;
 
-      showingLayer = showingLayer === 1 ? 2 : 1;
+      const tempImg = new Image();
+      tempImg.onload = () => {
+        topImg.src = tempImg.src;
+
+        topLayer.style.zIndex = 2;
+        topLayer.style.opacity = 1;
+
+        bottomLayer.style.zIndex = 1;
+        bottomLayer.style.opacity = 0;
+
+        showingLayer = showingLayer === 1 ? 2 : 1;
+      };
+      tempImg.src = `${newImage}.jpg`;
     }
 
     function nextImage() {
@@ -133,13 +137,13 @@
       updateImage(currentImage);
     }
 
-    // Keyboard nav
+    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') nextImage();
       if (e.key === 'ArrowLeft') prevImage();
     });
 
-    // Auto-play
+    // Auto-play slideshow
     setInterval(() => {
       nextImage();
     }, 4000);
