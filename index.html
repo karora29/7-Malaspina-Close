@@ -11,7 +11,7 @@
       box-sizing: border-box;
     }
 
-    body, html {
+    html, body {
       height: 100%;
       width: 100%;
       background: #000;
@@ -32,12 +32,11 @@
       top: 0;
       left: 0;
       width: 100%;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
+      display: none;
     }
 
     .image-layer.visible {
-      opacity: 1;
+      display: block;
       z-index: 2;
     }
 
@@ -91,7 +90,7 @@
   <div id="container">
     <button class="nav-button prev" onclick="prevImage()">‹</button>
 
-    <!-- Two layers for crossfade -->
+    <!-- Two image layers for switching -->
     <div class="image-layer visible" id="layer1">
       <img src="1.jpg" id="img1" />
     </div>
@@ -117,13 +116,14 @@
       const nextLayer = showingLayer === 1 ? layer2 : layer1;
       const nextImg = showingLayer === 1 ? img2 : img1;
 
-      nextImg.src = `${newImage}.jpg`;
-      nextLayer.classList.add("visible");
+      // Reset zoom animation
+      nextImg.style.animation = 'none';
+      void nextImg.offsetWidth;
+      nextImg.style.animation = '';
 
-      // After fade-in completes, hide the previous layer
-      setTimeout(() => {
-        currentLayer.classList.remove("visible");
-      }, 500);
+      nextImg.src = `${newImage}.jpg`;
+      currentLayer.classList.remove("visible");
+      nextLayer.classList.add("visible");
 
       showingLayer = showingLayer === 1 ? 2 : 1;
     }
@@ -144,7 +144,7 @@
       if (e.key === 'ArrowLeft') prevImage();
     });
 
-    // Auto-play slideshow
+    // Auto-play slideshow every 4 seconds
     setInterval(() => {
       nextImage();
     }, 4000);
