@@ -21,27 +21,35 @@
     }
 
     #container {
+      width: 100%;
       max-width: 100%;
-      max-height: 100%;
       position: relative;
       overflow: hidden;
     }
 
     img {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
+      width: 100%;
+      height: auto;
       display: block;
-      animation: zoomIn 20s ease-in-out infinite;
+      animation: zoomIn 20s ease-in-out forwards, fadeIn 1s ease-in-out;
       transform-origin: center center;
     }
 
     @keyframes zoomIn {
-      0% {
+      from {
         transform: scale(1);
       }
-      100% {
-        transform: scale(1.05);
+      to {
+        transform: scale(1.1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
       }
     }
 
@@ -87,9 +95,8 @@
 
     function updateImage() {
       imageElement.classList.remove("animate");
-      void imageElement.offsetWidth; // restart animation
+      void imageElement.offsetWidth; // Reset animation
       imageElement.src = `${currentImage}.jpg`;
-      imageElement.classList.add("animate");
     }
 
     function nextImage() {
