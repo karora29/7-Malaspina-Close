@@ -11,7 +11,7 @@
       box-sizing: border-box;
     }
 
-    html, body {
+    body, html {
       height: 100%;
       width: 100%;
       background: #000;
@@ -32,12 +32,8 @@
       top: 0;
       left: 0;
       width: 100%;
-      display: none;
-    }
-
-    .image-layer.visible {
-      display: block;
-      z-index: 2;
+      transition: opacity 1s ease-in-out;
+      will-change: opacity;
     }
 
     img {
@@ -90,11 +86,11 @@
   <div id="container">
     <button class="nav-button prev" onclick="prevImage()">‹</button>
 
-    <!-- Two image layers for switching -->
-    <div class="image-layer visible" id="layer1">
+    <!-- Two layers for crossfade -->
+    <div class="image-layer" id="layer1" style="z-index: 1; opacity: 1;">
       <img src="1.jpg" id="img1" />
     </div>
-    <div class="image-layer" id="layer2">
+    <div class="image-layer" id="layer2" style="z-index: 0; opacity: 0;">
       <img src="" id="img2" />
     </div>
 
@@ -112,20 +108,23 @@
     const layer2 = document.getElementById("layer2");
 
     function updateImage(newImage) {
-      const currentLayer = showingLayer === 1 ? layer1 : layer2;
-      const nextLayer = showingLayer === 1 ? layer2 : layer1;
-      const nextImg = showingLayer === 1 ? img2 : img1;
+      const topLayer = showingLayer === 1 ? layer2 : layer1;
+      const topImg = showingLayer === 1 ? img2 : img1;
+      const bottomLayer = showingLayer === 1 ? layer1 : layer2;
 
-      // Reset zoom animation
-      nextImg.style.animation = 'none';
-      void nextImg.offsetWidth;
-      nextImg.style.animation = '';
+      const tempImg = new Image();
+      tempImg.onload = () => {
+        topImg.src = tempImg.src;
 
-      nextImg.src = `${newImage}.jpg`;
-      currentLayer.classList.remove("visible");
-      nextLayer.classList.add("visible");
+        topLayer.style.zIndex = 2;
+        topLayer.style.opacity = 1;
 
-      showingLayer = showingLayer === 1 ? 2 : 1;
+        bottomLayer.style.zIndex = 1;
+        bottomLayer.style.opacity = 0;
+
+        showingLayer = showingLayer === 1 ? 2 : 1;
+      };
+      tempImg.src = `${newImage}.jpg`;
     }
 
     function nextImage() {
@@ -144,7 +143,7 @@
       if (e.key === 'ArrowLeft') prevImage();
     });
 
-    // Auto-play slideshow every 4 seconds
+    // Auto-play slideshow
     setInterval(() => {
       nextImage();
     }, 4000);
