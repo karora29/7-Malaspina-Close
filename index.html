@@ -32,8 +32,13 @@
       top: 0;
       left: 0;
       width: 100%;
-      transition: opacity 1s ease-in-out;
-      will-change: opacity;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .image-layer.visible {
+      opacity: 1;
+      z-index: 2;
     }
 
     img {
@@ -87,10 +92,10 @@
     <button class="nav-button prev" onclick="prevImage()">‹</button>
 
     <!-- Two layers for crossfade -->
-    <div class="image-layer" id="layer1" style="z-index: 1; opacity: 1;">
+    <div class="image-layer visible" id="layer1">
       <img src="1.jpg" id="img1" />
     </div>
-    <div class="image-layer" id="layer2" style="z-index: 0; opacity: 0;">
+    <div class="image-layer" id="layer2">
       <img src="" id="img2" />
     </div>
 
@@ -108,23 +113,19 @@
     const layer2 = document.getElementById("layer2");
 
     function updateImage(newImage) {
-      const topLayer = showingLayer === 1 ? layer2 : layer1;
-      const topImg = showingLayer === 1 ? img2 : img1;
-      const bottomLayer = showingLayer === 1 ? layer1 : layer2;
+      const currentLayer = showingLayer === 1 ? layer1 : layer2;
+      const nextLayer = showingLayer === 1 ? layer2 : layer1;
+      const nextImg = showingLayer === 1 ? img2 : img1;
 
-      const tempImg = new Image();
-      tempImg.onload = () => {
-        topImg.src = tempImg.src;
+      nextImg.src = `${newImage}.jpg`;
+      nextLayer.classList.add("visible");
 
-        topLayer.style.zIndex = 2;
-        topLayer.style.opacity = 1;
+      // After fade-in completes, hide the previous layer
+      setTimeout(() => {
+        currentLayer.classList.remove("visible");
+      }, 500);
 
-        bottomLayer.style.zIndex = 1;
-        bottomLayer.style.opacity = 0;
-
-        showingLayer = showingLayer === 1 ? 2 : 1;
-      };
-      tempImg.src = `${newImage}.jpg`;
+      showingLayer = showingLayer === 1 ? 2 : 1;
     }
 
     function nextImage() {
