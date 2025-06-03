@@ -11,7 +11,7 @@
       box-sizing: border-box;
     }
 
-    body, html {
+    html, body {
       height: 100%;
       width: 100%;
       background: #000;
@@ -31,7 +31,8 @@
       width: 100%;
       height: auto;
       display: block;
-      animation: zoomIn 20s ease-in-out forwards, fadeIn 1s ease-in-out;
+      object-fit: contain;
+      animation: zoomIn 15s ease-in-out forwards;
       transform-origin: center center;
     }
 
@@ -40,16 +41,7 @@
         transform: scale(1);
       }
       to {
-        transform: scale(1.1);
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
+        transform: scale(1.2);
       }
     }
 
@@ -94,9 +86,10 @@
     const imageElement = document.getElementById("tourImage");
 
     function updateImage() {
-      imageElement.classList.remove("animate");
-      void imageElement.offsetWidth; // Reset animation
       imageElement.src = `${currentImage}.jpg`;
+      imageElement.style.animation = 'none'; // Reset zoom
+      void imageElement.offsetWidth;
+      imageElement.style.animation = 'zoomIn 15s ease-in-out forwards';
     }
 
     function nextImage() {
@@ -113,7 +106,7 @@
       }
     }
 
-    // Optional: Keyboard navigation
+    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') nextImage();
       if (e.key === 'ArrowLeft') prevImage();
