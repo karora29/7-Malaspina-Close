@@ -93,24 +93,24 @@
     }
 
     function nextImage() {
-      if (currentImage < totalImages) {
-        currentImage++;
-        updateImage();
-      }
+      currentImage = currentImage < totalImages ? currentImage + 1 : 1;
+      updateImage();
     }
 
     function prevImage() {
-      if (currentImage > 1) {
-        currentImage--;
-        updateImage();
-      }
+      currentImage = currentImage > 1 ? currentImage - 1 : totalImages;
+      updateImage();
     }
 
-    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') nextImage();
       if (e.key === 'ArrowLeft') prevImage();
     });
+
+    // ⏱ Autoplay: Change image every 4 seconds
+    setInterval(() => {
+      nextImage();
+    }, 4000);
   </script>
 </body>
 </html>
