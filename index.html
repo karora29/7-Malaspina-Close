@@ -1,6 +1,159 @@
 <!DOCTYPE html>
-<html>
-  <body style="background: black;">
-    <img src="1.jpg" style="width: 100%;" />
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtual Tour</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #container {
+      width: 100%;
+      max-width: 100%;
+      position: relative;
+      overflow: hidden;
+      visibility: hidden;
+    }
+
+    .image-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: none;
+    }
+
+    .image-layer.visible {
+      display: block;
+      z-index: 2;
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      animation: zoomIn 15s ease-in-out forwards;
+      transform-origin: center center;
+    }
+
+    @keyframes zoomIn {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.2);
+      }
+    }
+
+    .nav-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.6);
+      border: none;
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      z-index: 10;
+      color: #000;
+    }
+
+    .prev {
+      left: 10px;
+    }
+
+    .next {
+      right: 10px;
+    }
+
+    @media (hover: hover) {
+      .nav-button:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <button class="nav-button prev" onclick="prevImage()">‹</button>
+
+    <div class="image-layer visible" id="layer1">
+      <img id="img1" src="" />
+    </div>
+    <div class="image-layer" id="layer2">
+      <img id="img2" src="" />
+    </div>
+
+    <button class="nav-button next" onclick="nextImage()">›</button>
+  </div>
+
+  <script>
+    const totalImages = 52;
+    let currentImage = 1;
+    let showingLayer = 1;
+
+    const img1 = document.getElementById("img1");
+    const img2 = document.getElementById("img2");
+    const layer1 = document.getElementById("layer1");
+    const layer2 = document.getElementById("layer2");
+    const container = document.getElementById("container");
+
+    // First image preload
+    const preload = new Image();
+    preload.src = "1.jpg";
+    preload.onload = () => {
+      img1.src = "1.jpg";
+      container.style.visibility = "visible";
+    };
+
+    function updateImage(newImage) {
+      const currentLayer = showingLayer === 1 ? layer1 : layer2;
+      const nextLayer = showingLayer === 1 ? layer2 : layer1;
+      const nextImg = showingLayer === 1 ? img2 : img1;
+
+      nextImg.src = `${newImage}.jpg`;
+      nextImg.style.animation = 'none';
+      void nextImg.offsetWidth;
+      nextImg.style.animation = 'zoomIn 15s ease-in-out forwards';
+
+      currentLayer.classList.remove("visible");
+      nextLayer.classList.add("visible");
+
+      showingLayer = showingLayer === 1 ? 2 : 1;
+    }
+
+    function nextImage() {
+      currentImage = currentImage < totalImages ? currentImage + 1 : 1;
+      updateImage(currentImage);
+    }
+
+    function prevImage() {
+      currentImage = currentImage > 1 ? currentImage - 1 : totalImages;
+      updateImage(currentImage);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+    });
+
+    setInterval(() => {
+      nextImage();
+    }, 4000);
+  </script>
+</body>
 </html>
