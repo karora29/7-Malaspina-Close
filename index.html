@@ -25,7 +25,7 @@
       max-width: 100%;
       position: relative;
       overflow: hidden;
-      visibility: hidden;
+      visibility: hidden; /* Hidden until first image loads */
     }
 
     .image-layer {
@@ -112,7 +112,7 @@
     const layer2 = document.getElementById("layer2");
     const container = document.getElementById("container");
 
-    // First image preload
+    // Ensure container shows only after first image is ready
     const preload = new Image();
     preload.src = "1.jpg";
     preload.onload = () => {
