@@ -27,6 +27,19 @@
       overflow: hidden;
     }
 
+    .image-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: none;
+    }
+
+    .image-layer.visible {
+      display: block;
+      z-index: 2;
+    }
+
     img {
       width: 100%;
       height: auto;
@@ -76,30 +89,55 @@
 <body>
   <div id="container">
     <button class="nav-button prev" onclick="prevImage()">‹</button>
-    <img id="tourImage" src="1.jpg" alt="Tour Image" />
+
+    <!-- Two layers for true jump cut with zoom animation on each -->
+    <div class="image-layer visible" id="layer1">
+      <img id="img1" src="1.jpg" />
+    </div>
+    <div class="image-layer" id="layer2">
+      <img id="img2" src="" />
+    </div>
+
     <button class="nav-button next" onclick="nextImage()">›</button>
   </div>
 
   <script>
     const totalImages = 52;
     let currentImage = 1;
-    const imageElement = document.getElementById("tourImage");
+    let showingLayer = 1;
 
-    function updateImage() {
-      imageElement.src = `${currentImage}.jpg`;
-      imageElement.style.animation = 'none'; // Reset zoom
-      void imageElement.offsetWidth;
-      imageElement.style.animation = 'zoomIn 15s ease-in-out forwards';
+    const img1 = document.getElementById("img1");
+    const img2 = document.getElementById("img2");
+    const layer1 = document.getElementById("layer1");
+    const layer2 = document.getElementById("layer2");
+
+    function updateImage(newImage) {
+      const currentLayer = showingLayer === 1 ? layer1 : layer2;
+      const nextLayer = showingLayer === 1 ? layer2 : layer1;
+      const nextImg = showingLayer === 1 ? img2 : img1;
+
+      nextImg.src = `${newImage}.jpg`;
+
+      // Restart zoom animation
+      nextImg.style.animation = 'none';
+      void nextImg.offsetWidth;
+      nextImg.style.animation = 'zoomIn 15s ease-in-out forwards';
+
+      // Swap visibility
+      currentLayer.classList.remove("visible");
+      nextLayer.classList.add("visible");
+
+      showingLayer = showingLayer === 1 ? 2 : 1;
     }
 
     function nextImage() {
       currentImage = currentImage < totalImages ? currentImage + 1 : 1;
-      updateImage();
+      updateImage(currentImage);
     }
 
     function prevImage() {
       currentImage = currentImage > 1 ? currentImage - 1 : totalImages;
-      updateImage();
+      updateImage(currentImage);
     }
 
     document.addEventListener('keydown', (e) => {
@@ -107,7 +145,6 @@
       if (e.key === 'ArrowLeft') prevImage();
     });
 
-    // ⏱ Autoplay: Change image every 4 seconds
     setInterval(() => {
       nextImage();
     }, 4000);
